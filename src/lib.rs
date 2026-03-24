@@ -85,6 +85,10 @@ impl<T> DoublyLinkedList<T> {
     pub fn len(&self) -> usize {
         self.len
     }
+
+    pub fn is_empty(&self) -> bool {
+        self.len == 0
+    }
 }
 
 
@@ -125,6 +129,22 @@ mod tests {
 
         let length = list.len();
         assert_eq!(length, 3)
+    }
+
+    #[test]
+    fn test_is_empty() {
+        let mut list1 = DoublyLinkedList::new();
+        list1.push_back(40);
+        list1.push_back(30);
+        list1.push_front(8);
+
+        let list2: DoublyLinkedList<i32> = DoublyLinkedList::new();
+        
+        let empty1 = list1.is_empty();
+        let empty2 = list2.is_empty();
+
+        assert_eq!(empty1, false);
+        assert_eq!(empty2, true);
     }
 
 }
