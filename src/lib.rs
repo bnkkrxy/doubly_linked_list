@@ -68,6 +68,8 @@ impl<T> DoublyLinkedList<T> {
                 self.tail = Some(new_node);
             }
         }
+
+        self.len += 1;
     }
 
     fn pop_front() {} //удаление элемента с начала
@@ -79,6 +81,10 @@ impl<T> DoublyLinkedList<T> {
     fn delete_index() {} //удаление элемента по индексу
 
     fn search_value() {} //поиск элемента по значению
+
+    pub fn len(&self) -> usize {
+        self.len
+    }
 }
 
 
@@ -100,15 +106,25 @@ mod tests {
 
         assert_eq!(list.len, 2);
     }
-
+    #[test]
     fn test_push_back() {
+        let mut list = DoublyLinkedList::new();
+        list.push_back(40);
+        list.push_back(30);
+        list.push_back(8);
+
+
+        assert_eq!(list.len, 3);
+    }
+    #[test]
+    fn test_len() {
         let mut list = DoublyLinkedList::new();
         list.push_back(40);
         list.push_back(30);
         list.push_front(8);
 
-
-        assert_eq!(list.len, 3);
+        let length = list.len();
+        assert_eq!(length, 3)
     }
 
 }
