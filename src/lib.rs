@@ -25,7 +25,15 @@ impl<T> Node<T> {
 
 impl<T> DoublyLinkedList<T> {
 
-    fn push_front(&mut self, value: T){  //добавление элемента в начало
+    pub fn new() -> Self {
+        DoublyLinkedList { 
+            head: None, 
+            tail: None, 
+            len: 0 
+        }
+    }
+
+    pub fn push_front(&mut self, value: T){  //добавление элемента в начало
         let new_node = Node::new(value);
 
         match self.head.take() {
@@ -69,6 +77,13 @@ impl<T> DoublyLinkedList<T> {
 mod tests {
     use super::*;
 
-    
+    #[test]
+    fn test_push_front() {
+        let mut list = DoublyLinkedList::new();
+        list.push_front(10);
+        list.push_front(20);
+
+        assert_eq!(list.len, 2);
+    }
 
 }
