@@ -1,5 +1,5 @@
 use std::rc::Rc;
-use std::cell::RefCell;
+use std::cell::{Ref, RefCell};
 use std::rc::Weak;
 struct Node<T> {
     value: T,
@@ -53,7 +53,22 @@ impl<T> DoublyLinkedList<T> {
         
     } 
 
-    fn push_back() {} //добавление элемента в конец 
+    fn push_back(&mut self, value: T) { //добавление элемента в конец 
+        let new_node = Node::new(value);
+
+        match self.tail.take() {
+            Some(ex_tail) => {
+                new_node.borrow_mut().prev = Some(Rc::downgrade(&ex_tail));
+                ex_tail.borrow_mut().next = Some(Rc::clone(&new_node));
+
+                self.tail = Some(new_node);
+            }
+            None => {
+                self.head = Some(Rc::clone(&new_node));
+                self.tail = Some(new_node);
+            }
+        }
+    }
 
     fn pop_front() {} //удаление элемента с начала
 
@@ -84,6 +99,16 @@ mod tests {
         list.push_front(20);
 
         assert_eq!(list.len, 2);
+    }
+
+    fn test_push_back() {
+        let mut list = DoublyLinkedList::new();
+        list.push_back(40);
+        list.push_back(30);
+        list.push_front(8);
+
+
+        assert_eq!(list.len, 3);
     }
 
 }
