@@ -1,6 +1,7 @@
 use std::rc::Rc;
-use std::cell::{Ref, RefCell};
+use std::cell::RefCell;
 use std::rc::Weak;
+pub mod list_iterator;
 struct Node<T> {
     value: T,
     next: Option<Rc<RefCell<Node<T>>>>,
@@ -113,12 +114,18 @@ impl<T> DoublyLinkedList<T> {
         }
     }
 
+    //с итераторами эти
+    fn add_index(&mut self) { //вставка элемента по индексу
+        
+    }
 
-    fn add_index() {} //вставка элемента по индексу
+    fn delete_index() { //удаление элемента по индексу
 
-    fn delete_index() {} //удаление элемента по индексу
+    }
 
-    fn search_value() {} //поиск элемента по значению
+    fn search_value() { //поиск элемента по значению
+
+    }
 
     pub fn len(&self) -> usize {
         self.len
