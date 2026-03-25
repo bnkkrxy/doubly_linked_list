@@ -92,7 +92,25 @@ impl<T> DoublyLinkedList<T> {
         }
     } 
 
-    fn pop_back() { //удаление элемента с конца 
+    fn pop_back(&mut self) { //удаление элемента с конца 
+        if let Some(old_tail) = self.tail.take() {
+        
+            self.len -= 1;
+            let mut old_node_weak = old_tail.borrow_mut().prev.take();
+                
+            match old_node_weak {
+                Some(new_tail) => {
+                    if let Some(new_tail_rc) = new_tail.upgrade() {
+                        new_tail_rc.borrow_mut().next = None;
+                        self.tail = Some(new_tail_rc);
+                    }
+                }
+                None => {
+                    self.head = None;
+                }
+            }
+
+        }
     }
 
 
@@ -178,5 +196,18 @@ mod tests {
 
         assert_eq!(list1.len, 2)
     }
+
+    #[test]
+    fn test_pop_back() {
+        let mut list1 = DoublyLinkedList::new();
+        list1.push_back(40);
+        list1.push_back(30);
+        list1.push_front(8);
+
+        list1.pop_back();
+
+        assert_eq!(list1.len, 2)
+    }
+
 
 }
