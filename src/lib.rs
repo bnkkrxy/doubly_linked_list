@@ -308,5 +308,15 @@ mod tests {
         assert_eq!(list1.len, 4)
     }
 
+    fn test_delete_index() {
+        let mut list1 = DoublyLinkedList::new();
+        list1.push_back(40);
+        list1.push_back(30);
+        list1.push_front(8);
+
+        list1.delete_index(2);
+        assert_eq!(list1.len, 2)
+    }
+
 
 }
