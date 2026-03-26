@@ -25,7 +25,7 @@ impl<T> Node<T> {
     }
 }
 
-impl<T> DoublyLinkedList<T> {
+impl<T: PartialEq> DoublyLinkedList<T> {
 
     pub fn new() -> Self {
         DoublyLinkedList { 
@@ -203,8 +203,21 @@ impl<T> DoublyLinkedList<T> {
         Ok(())
     }
 
-    pub fn search_value() { //поиск элемента по значению
+    pub fn get_by_value(&self, value: T) -> Option<usize> { //поиск элемента по значению
+        let mut curr = self.head.clone();
+        let mut index = 0;
 
+        while let Some(node_rc) = curr.as_ref() {
+            if node_rc.borrow().value == value {
+                return Some(index);
+            }
+
+            let next_node = node_rc.borrow().next.clone();
+            curr = next_node;
+            index += 1;
+        }
+
+        None
     }
 
     pub fn len(&self) -> usize {
