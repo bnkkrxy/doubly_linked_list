@@ -167,10 +167,40 @@ impl<T> DoublyLinkedList<T> {
         Ok(())
     }
 
-    pub fn delete_index(&mut self, index: usize) { //удаление элемента по индексу
-        if index == 0 {
-
+    pub fn delete_index(&mut self, index: usize) -> Result<(), String> { //удаление элемента по индексу
+        
+        if index > self.len {
+            return Err("Index out of list!".to_string());
         }
+
+        if let Some(curr_node) = self.get_node(index) {
+            let prev_deleted = curr_node
+                .borrow()
+                .prev
+                .as_ref()
+                .clone()
+                .and_then(|weak_ref| weak_ref.upgrade());
+            let next_deleted = curr_node
+                .borrow()
+                .next
+                .clone();
+
+            if let Some(prev_deleted_rc) = prev_deleted.as_ref() {
+                prev_deleted_rc.borrow_mut().next = next_deleted.clone();
+            }
+            else {
+                self.head =  next_deleted.clone();
+            }
+
+            if let Some(next_deleted_rc) = next_deleted.as_ref() {
+                next_deleted_rc.borrow_mut().prev = prev_deleted.as_ref().map(|rc| Rc::downgrade(rc));
+            }
+            else {
+                self.tail = prev_deleted.clone();
+            }
+        }
+        self.len -= 1;
+        Ok(())
     }
 
     pub fn search_value() { //поиск элемента по значению
