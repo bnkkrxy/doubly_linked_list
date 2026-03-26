@@ -1,3 +1,4 @@
+use std::fmt::Error;
 use std::rc::Rc;
 use std::cell::RefCell;
 use std::rc::Weak;
@@ -114,9 +115,54 @@ impl<T> DoublyLinkedList<T> {
         }
     }
 
+    fn get_node(&self, index: usize) -> Option<Rc<RefCell<Node<T>>>> { //для поиска ноды
+        if index > self.len {
+            return None;
+        }
+
+        let mut curr = self.head.clone();
+        let mut i = 0;
+
+        while let Some(node) = curr {
+            if i == index {
+                return Some(node);
+            }
+            curr = node.borrow().next.clone();
+            i += 1;
+        }
+
+        None
+
+    }
+
     //с итераторами эти
-    fn add_index(&mut self) { //вставка элемента по индексу
-        
+    fn add_index(&mut self, index: usize, value: T) -> Result<(), String> { //вставка элемента по индексу
+        if index == 0 {
+            self.push_front(value);
+            return Ok(())
+        }
+        if index == self.len {
+            self.push_back(value);
+            return Ok(())
+        }
+
+        if let Some(curr_node) = self.get_node(index) {
+            let new_node = Node::new(value);
+            new_node.borrow_mut().next = Some(Rc::clone(&curr_node));
+            
+            let old_prev = curr_node
+                .borrow()
+                .prev
+                .as_ref()
+                .and_then(|weak_ref| weak_ref.upgrade());
+            if let Some(old_prev_rc) = old_prev {
+                old_prev_rc.borrow_mut().next = Some(Rc::clone(&new_node));
+            }
+        }           
+
+        self.len += 1;
+
+        Ok(())
     }
 
     fn delete_index() { //удаление элемента по индексу
