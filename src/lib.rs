@@ -262,5 +262,17 @@ mod tests {
         assert_eq!(list1.len, 2)
     }
 
+    #[test]
+    fn test_add_index() {
+        let mut list1 = DoublyLinkedList::new();
+        list1.push_back(40);
+        list1.push_back(30);
+        list1.push_front(8);
+
+        list1.add_index(2, 56);
+
+        assert_eq!(list1.len, 4)
+    }
+
 
 }
