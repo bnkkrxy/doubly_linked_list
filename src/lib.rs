@@ -331,5 +331,14 @@ mod tests {
         assert_eq!(list1.len, 2)
     }
 
+    #[test]
+    fn test_value() {
+        let mut list1 = DoublyLinkedList::new();
+        list1.push_back(40);
+        list1.push_back(30);
+        list1.push_front(8);
 
+        let ind = list1.get_by_value(30);
+        assert_eq!(ind, Some(2))
+    }
 }
