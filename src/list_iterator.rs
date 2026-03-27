@@ -3,7 +3,7 @@ use std::cell::RefCell;
 use crate::Node;
 
 pub struct ListIterator<T> {
-    current: Option<Rc<RefCell<Node<T>>>>
+    pub current: Option<Rc<RefCell<Node<T>>>>
 }
 
 impl<T: Clone> Iterator for ListIterator<T> {

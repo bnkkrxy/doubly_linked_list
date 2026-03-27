@@ -1,7 +1,8 @@
-use std::fmt::Error;
 use std::rc::Rc;
 use std::cell::RefCell;
 use std::rc::Weak;
+
+use crate::list_iterator::ListIterator;
 pub mod list_iterator;
 struct Node<T> {
     value: T,
@@ -25,13 +26,28 @@ impl<T> Node<T> {
     }
 }
 
-impl<T: PartialEq> DoublyLinkedList<T> {
+impl<T: Clone + PartialEq> IntoIterator for &DoublyLinkedList<T> {
+    type Item = T;
+    type IntoIter = ListIterator<T>;
+
+    fn into_iter(self) -> Self::IntoIter {
+        self.iter()
+    }
+}
+
+impl<T: PartialEq + Clone> DoublyLinkedList<T> {
 
     pub fn new() -> Self {
         DoublyLinkedList { 
             head: None, 
             tail: None, 
             len: 0 
+        }
+    }
+
+    pub fn iter(&self) -> ListIterator<T> {
+        ListIterator {
+            current: self.head.clone(),
         }
     }
 
@@ -341,4 +357,5 @@ mod tests {
         let ind = list1.get_by_value(30);
         assert_eq!(ind, Some(2))
     }
+
 }
