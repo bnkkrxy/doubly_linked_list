@@ -1,6 +1,7 @@
 use std::rc::Rc;
 use std::cell::RefCell;
 use std::rc::Weak;
+use std::fmt;
 
 use crate::list_iterator::ListIterator;
 pub mod list_iterator;
@@ -32,6 +33,12 @@ impl<T: Clone + PartialEq> IntoIterator for &DoublyLinkedList<T> {
 
     fn into_iter(self) -> Self::IntoIter {
         self.iter()
+    }
+}
+
+impl<T: fmt::Debug + PartialEq + Clone> fmt::Debug for DoublyLinkedList<T> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.debug_list().entries(self.iter()).finish()
     }
 }
 
@@ -356,6 +363,14 @@ mod tests {
 
         let ind = list1.get_by_value(30);
         assert_eq!(ind, Some(2))
+    }
+    #[test]
+    fn test_debug() {
+        let mut list1 = DoublyLinkedList::new();
+        list1.push_back(40);
+        list1.push_back(30);
+        list1.push_front(8);
+        println!("{:?}", list1);
     }
 
 }
