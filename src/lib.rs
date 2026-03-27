@@ -5,6 +5,8 @@ use std::fmt;
 
 use crate::list_iterator::ListIterator;
 pub mod list_iterator;
+mod test;
+
 struct Node<T> {
     value: T,
     next: Option<Rc<RefCell<Node<T>>>>,
@@ -250,127 +252,4 @@ impl<T: PartialEq + Clone> DoublyLinkedList<T> {
     pub fn is_empty(&self) -> bool {
         self.len == 0
     }
-}
-
-
-
-
-
-
-
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn test_push_front() {
-        let mut list = DoublyLinkedList::new();
-        list.push_front(10);
-        list.push_front(20);
-
-        assert_eq!(list.len, 2);
-    }
-    #[test]
-    fn test_push_back() {
-        let mut list = DoublyLinkedList::new();
-        list.push_back(40);
-        list.push_back(30);
-        list.push_back(8);
-
-
-        assert_eq!(list.len, 3);
-    }
-    #[test]
-    fn test_len() {
-        let mut list = DoublyLinkedList::new();
-        list.push_back(40);
-        list.push_back(30);
-        list.push_front(8);
-
-        let length = list.len();
-        assert_eq!(length, 3)
-    }
-
-    #[test]
-    fn test_is_empty() {
-        let mut list1 = DoublyLinkedList::new();
-        list1.push_back(40);
-        list1.push_back(30);
-        list1.push_front(8);
-
-        let list2: DoublyLinkedList<i32> = DoublyLinkedList::new();
-        
-        let empty1 = list1.is_empty();
-        let empty2 = list2.is_empty();
-
-        assert_eq!(empty1, false);
-        assert_eq!(empty2, true);
-    }
-
-    #[test]
-    fn test_pop_front() {
-        let mut list1 = DoublyLinkedList::new();
-        list1.push_back(40);
-        list1.push_back(30);
-        list1.push_front(8);
-
-        list1.pop_front();
-
-        assert_eq!(list1.len, 2)
-    }
-
-    #[test]
-    fn test_pop_back() {
-        let mut list1 = DoublyLinkedList::new();
-        list1.push_back(40);
-        list1.push_back(30);
-        list1.push_front(8);
-
-        list1.pop_back();
-
-        assert_eq!(list1.len, 2)
-    }
-
-    #[test]
-    fn test_add_index() {
-        let mut list1 = DoublyLinkedList::new();
-        list1.push_back(40);
-        list1.push_back(30);
-        list1.push_front(8);
-
-        list1.add_index(2, 56);
-
-        assert_eq!(list1.len, 4)
-    }
-
-    fn test_delete_index() {
-        let mut list1 = DoublyLinkedList::new();
-        list1.push_back(40);
-        list1.push_back(30);
-        list1.push_front(8);
-
-        list1.delete_index(2);
-        assert_eq!(list1.len, 2)
-    }
-
-    #[test]
-    fn test_value() {
-        let mut list1 = DoublyLinkedList::new();
-        list1.push_back(40);
-        list1.push_back(30);
-        list1.push_front(8);
-
-        let ind = list1.get_by_value(30);
-        assert_eq!(ind, Some(2))
-    }
-    #[test]
-    fn test_debug() {
-        let mut list1 = DoublyLinkedList::new();
-        list1.push_back(40);
-        list1.push_back(30);
-        list1.push_front(8);
-        println!("{:?}", list1);
-    }
-
 }
