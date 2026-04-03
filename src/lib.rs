@@ -99,14 +99,12 @@ impl<T: PartialEq + Clone> DoublyLinkedList<T> {
         self.len += 1;
     }
 
-    pub fn pop_front(&mut self) { //удаление элемента с начала
-
-        if let Some(old_head) = self.head.take() {
-        
+    pub fn pop_front(&mut self) -> Option<T>{ //удаление элемента с начала
+        self.head.take().map(|old_head| {
             self.len -= 1;
-            let mut old_node = old_head.borrow_mut();
+            let mut next_node = old_head.borrow_mut().next.take();
                 
-            match old_node.next.take() {
+            match next_node {
                 Some(new_head) => {
                     new_head.borrow_mut().prev = None;
                     self.head = Some(new_head);
@@ -116,28 +114,44 @@ impl<T: PartialEq + Clone> DoublyLinkedList<T> {
                 }
             }
 
-        }
+            match Rc::try_unwrap(old_head) {
+                Ok(ref_cell) => {
+                    ref_cell.into_inner().value
+                },
+                Err(_) => panic!("Node is still borrowed!")
+            }
+        })
     } 
 
-    pub fn pop_back(&mut self) { //удаление элемента с конца 
-        if let Some(old_tail) = self.tail.take() {
-        
+    pub fn pop_back(&mut self) -> Option<T> { //удаление элемента с конца 
+        self.tail.take().map(|old_tail| {
             self.len -= 1;
-            let mut old_node_weak = old_tail.borrow_mut().prev.take();
+            let mut old_node_rc = old_tail
+                .borrow_mut()
+                .prev
+                .take()
+                .and_then(|weak| weak.upgrade());
                 
-            match old_node_weak {
+            match old_node_rc {
                 Some(new_tail) => {
-                    if let Some(new_tail_rc) = new_tail.upgrade() {
-                        new_tail_rc.borrow_mut().next = None;
-                        self.tail = Some(new_tail_rc);
-                    }
+                    new_tail.borrow_mut().next = None;
+                    self.tail = Some(new_tail);
                 }
                 None => {
                     self.head = None;
                 }
             }
 
-        }
+            match Rc::try_unwrap(old_tail) {
+                Ok(ref_cell) => {
+                    ref_cell.into_inner().value
+                }
+                Err(_) => panic!("Node is still borrowed!")
+            }
+        })
+
+            
+
     }
 
     pub fn get_node(&self, index: usize) -> Option<Rc<RefCell<Node<T>>>> { //для поиска ноды
