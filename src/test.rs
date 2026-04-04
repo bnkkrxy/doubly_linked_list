@@ -60,13 +60,20 @@ use crate::DoublyLinkedList;
         list.pop_back();
         assert_eq!(list.len, 18);
 
-        list.delete_index(1);
+        println!("{:?}", list);
+
+        list.delete_index(5);
         assert_eq!(list.len, 17);
 
         println!("{:?}", list);
 
-        let mut list1: DoublyLinkedList<i32> = DoublyLinkedList::new();
-        list1.pop_back();
+        let mut list1 = DoublyLinkedList::new();
+        list1.push_back(1);
+        list1.push_back(2);
+
+        assert_eq!(list1.pop_front(), Some(1)); 
+        assert_eq!(list1.pop_back(), Some(2)); 
+        assert_eq!(list1.pop_front(), None);
     }
 
     #[test]
