@@ -1,6 +1,6 @@
 use crate::DoublyLinkedList;
 
-    fn create_list() -> DoublyLinkedList<i32> { //лист на 20 элементов
+    fn create_list() -> DoublyLinkedList<i32> { //лист на 20
         let mut list = DoublyLinkedList::new();
         for n in 1..21 {
             list.push_front(n);

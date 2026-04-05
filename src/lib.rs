@@ -196,10 +196,12 @@ impl<T: PartialEq + Clone> DoublyLinkedList<T> {
                 }
 
                 curr_node.borrow_mut().prev = Some(Rc::downgrade(&new_node));
-            }           
-        }
-        self.len += 1;
 
+                self.len += 1;
+            } else {
+                return Err("Internal error: node not found".to_string());
+            }          
+        }
         Ok(())
     }
 
