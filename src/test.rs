@@ -1,6 +1,6 @@
 use crate::DoublyLinkedList;
 
-    fn create_list() -> DoublyLinkedList<i32> {
+    fn create_list() -> DoublyLinkedList<i32> { //лист на 20 элементов
         let mut list = DoublyLinkedList::new();
         for n in 1..21 {
             list.push_front(n);
@@ -74,6 +74,17 @@ use crate::DoublyLinkedList;
         assert_eq!(list1.pop_front(), Some(1)); 
         assert_eq!(list1.pop_back(), Some(2)); 
         assert_eq!(list1.pop_front(), None);
+    }
+
+    #[test]
+    fn test_iterator_integrity() {
+        let mut list = create_list(); 
+        list.delete_index(5); 
+        assert_eq!(list.iter().count(), 19);
+
+        let values: Vec<i32> = list.iter().map(|x| x).collect();
+        assert_eq!(values.len(), 19);
+        assert!(!values.contains(&15)); 
     }
 
     #[test]

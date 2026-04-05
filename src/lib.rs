@@ -7,7 +7,7 @@ use crate::list_iterator::ListIterator;
 pub mod list_iterator;
 mod test;
 
-struct Node<T> {
+pub struct Node<T> {
     value: T,
     next: Option<Rc<RefCell<Node<T>>>>,
     prev: Option<Weak<RefCell<Node<T>>>>,
@@ -102,7 +102,7 @@ impl<T: PartialEq + Clone> DoublyLinkedList<T> {
     pub fn pop_front(&mut self) -> Option<T>{ //удаление элемента с начала
         self.head.take().map(|old_head| {
             self.len -= 1;
-            let mut next_node = old_head.borrow_mut().next.take();
+            let next_node = old_head.borrow_mut().next.take();
                 
             match next_node {
                 Some(new_head) => {
@@ -126,7 +126,7 @@ impl<T: PartialEq + Clone> DoublyLinkedList<T> {
     pub fn pop_back(&mut self) -> Option<T> { //удаление элемента с конца 
         self.tail.take().map(|old_tail| {
             self.len -= 1;
-            let mut old_node_rc = old_tail
+            let old_node_rc = old_tail
                 .borrow_mut()
                 .prev
                 .take()
@@ -190,15 +190,16 @@ impl<T: PartialEq + Clone> DoublyLinkedList<T> {
             if let Some(curr_node) = self.get_node(index) {
                 let new_node = Node::new(value);
                 new_node.borrow_mut().next = Some(Rc::clone(&curr_node));
-            
-                let old_prev = curr_node
-                    .borrow()
-                    .prev
-                    .as_ref()
-                    .and_then(|weak_ref| weak_ref.upgrade());
-                if let Some(old_prev_rc) = old_prev {
-                    old_prev_rc.borrow_mut().next = Some(Rc::clone(&new_node));
+                
+                let old_prev_weak = curr_node.borrow().prev.clone();
+                new_node.borrow_mut().prev = old_prev_weak.clone();
+
+                if let Some(old_prev_rc) = 
+                    old_prev_weak.and_then(|weak_ref| weak_ref.upgrade()) {
+                        old_prev_rc.borrow_mut().next = Some(Rc::clone(&new_node));
                 }
+
+                curr_node.borrow_mut().prev = Some(Rc::downgrade(&new_node));
             }           
         }
         self.len += 1;
