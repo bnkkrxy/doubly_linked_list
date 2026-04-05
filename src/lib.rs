@@ -115,9 +115,7 @@ impl<T: PartialEq + Clone> DoublyLinkedList<T> {
             }
 
             match Rc::try_unwrap(old_head) {
-                Ok(ref_cell) => {
-                    ref_cell.into_inner().value
-                },
+                Ok(ref_cell) => ref_cell.into_inner().value,
                 Err(_) => panic!("Node is still borrowed!")
             }
         })
@@ -143,9 +141,7 @@ impl<T: PartialEq + Clone> DoublyLinkedList<T> {
             }
 
             match Rc::try_unwrap(old_tail) {
-                Ok(ref_cell) => {
-                    ref_cell.into_inner().value
-                }
+                Ok(ref_cell) => ref_cell.into_inner().value,
                 Err(_) => panic!("Node is still borrowed!")
             }
         })
@@ -207,41 +203,53 @@ impl<T: PartialEq + Clone> DoublyLinkedList<T> {
         Ok(())
     }
 
-    pub fn delete_index(&mut self, index: usize) -> Result<(), String> { //удаление элемента по индексу
+    pub fn delete_index(&mut self, index: usize) -> Result<T, String> { //удаление элемента по индексу
         
-        if index > self.len {
+        if index >= self.len {
             return Err("Index out of list!".to_string());
         }
-
-        if let Some(curr_node) = self.get_node(index) {
-            let prev_deleted = curr_node
-                .borrow()
-                .prev
-                .as_ref()
-                .clone()
-                .and_then(|weak_ref| weak_ref.upgrade());
-            let next_deleted = curr_node
-                .borrow()
-                .next
-                .clone();
-
-            if let Some(prev_deleted_rc) = prev_deleted.as_ref() {
-                prev_deleted_rc.borrow_mut().next = next_deleted.clone();
-            }
-            else {
-                self.head =  next_deleted.clone();
-            }
-
-            if let Some(next_deleted_rc) = next_deleted.as_ref() {
-                next_deleted_rc.borrow_mut().prev = prev_deleted.as_ref().map(|rc| Rc::downgrade(rc));
-            }
-            else {
-                self.tail = prev_deleted.clone();
-            }
+        if index == 0 {
+            return self.pop_front().ok_or("List is empty!".to_string());
         }
+        if index == self.len - 1 {
+            return self.pop_back().ok_or("List is empty!".to_string());
+        }
+
+        let curr_node = self.get_node(index).ok_or("Node not found")?;
+        let prev_deleted = curr_node
+            .borrow()
+            .prev
+            .as_ref()
+            .clone()
+            .and_then(|weak_ref| weak_ref.upgrade());
+        let next_deleted = curr_node
+            .borrow()
+            .next
+            .clone();
+
+        if let Some(prev_deleted_rc) = prev_deleted.as_ref() {
+            prev_deleted_rc.borrow_mut().next = next_deleted.clone();
+        }
+        else {
+            self.head =  next_deleted.clone();
+        }
+
+        if let Some(next_deleted_rc) = next_deleted.as_ref() {
+            next_deleted_rc.borrow_mut().prev = prev_deleted.as_ref().map(|rc| Rc::downgrade(rc));
+        }
+        else {
+            self.tail = prev_deleted.clone();
+        }
+
         self.len -= 1;
-        Ok(())
+
+        match Rc::try_unwrap(curr_node) {
+            Ok(ref_cell) => Ok(ref_cell.into_inner().value),
+            Err(_) => panic!("Node is still borrowed!")
+        }
     }
+        
+
 
     pub fn get_by_value(&self, value: T) -> Option<usize> { //поиск элемента по значению
         let mut curr = self.head.clone();
