@@ -124,13 +124,13 @@ impl<T: PartialEq + Clone> DoublyLinkedList<T> {
     pub fn pop_back(&mut self) -> Option<T> { //удаление элемента с конца 
         self.tail.take().map(|old_tail| {
             self.len -= 1;
-            let old_node_rc = old_tail
+            let prev_node_rc = old_tail
                 .borrow_mut()
                 .prev
                 .take()
                 .and_then(|weak| weak.upgrade());
                 
-            match old_node_rc {
+            match prev_node_rc {
                 Some(new_tail) => {
                     new_tail.borrow_mut().next = None;
                     self.tail = Some(new_tail);
@@ -145,9 +145,6 @@ impl<T: PartialEq + Clone> DoublyLinkedList<T> {
                 Err(_) => panic!("Node is still borrowed!")
             }
         })
-
-            
-
     }
 
     pub fn get_node(&self, index: usize) -> Option<Rc<RefCell<Node<T>>>> { //для поиска ноды
