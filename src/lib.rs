@@ -148,7 +148,7 @@ impl<T: PartialEq + Clone> DoublyLinkedList<T> {
     }
 
     pub fn get_node(&self, index: usize) -> Option<Rc<RefCell<Node<T>>>> { //для поиска ноды
-        if index > self.len {
+        if index >= self.len {
             return None;
         }
 
