@@ -196,7 +196,7 @@ impl<T: PartialEq + Clone> DoublyLinkedList<T> {
 
                 self.len += 1;
             } else {
-                return Err("Internal error: node not found".to_string());
+                return Err("Internal error: node not found".to_string());     
             }          
         }
         Ok(())
@@ -229,15 +229,9 @@ impl<T: PartialEq + Clone> DoublyLinkedList<T> {
         if let Some(prev_deleted_rc) = prev_deleted.as_ref() {
             prev_deleted_rc.borrow_mut().next = next_deleted.clone();
         }
-        else {
-            self.head =  next_deleted.clone();
-        }
 
         if let Some(next_deleted_rc) = next_deleted.as_ref() {
             next_deleted_rc.borrow_mut().prev = prev_deleted.as_ref().map(|rc| Rc::downgrade(rc));
-        }
-        else {
-            self.tail = prev_deleted.clone();
         }
 
         self.len -= 1;
